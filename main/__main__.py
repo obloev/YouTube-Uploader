@@ -44,7 +44,7 @@ async def get_youtube_link(event):
     try:
         link = event.message.message
         streams = YouTube(link).streams
-        thumbnail_url = YouTube(link).YouTube(link)
+        thumbnail_url = YouTube(link).thumbnail_url
         videos = streams.filter(only_video=True).order_by('resolution')
         audios = streams.filter(only_audio=True)
         for video in videos:
