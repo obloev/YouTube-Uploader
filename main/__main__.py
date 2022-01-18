@@ -1,5 +1,6 @@
 import time
 from os import remove
+import requests
 from ethon.pyfunc import bash
 from telethon import events, Button
 from pytube import YouTube
@@ -45,12 +46,17 @@ async def get_youtube_link(event):
         link = event.message.message
         streams = YouTube(link).streams
         thumbnail_url = YouTube(link).thumbnail_url
+        thumb = thumbnail_url.split('/')[-1]
+        response = requests.get(thumbnail_url)
+        file = open(thumb, 'wb')
+        file.write(response.content)
+        file.close()
         videos = streams.filter(only_video=True).order_by('resolution')
         audios = streams.filter(only_audio=True)
         for video in videos:
             file = video.download()
             print(file)
-            await bot.send_file(event.sender_id, file, thumb=thumbnail_url)
+            await bot.send_file(event.sender_id, file, thumb=thumb)
         for audio in audios:
             await event.respond(f'{str(audio)} {hbs(audio.filesize)}')
     except RegexMatchError:
