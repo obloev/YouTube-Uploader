@@ -162,10 +162,7 @@ async def confirm(event):
     video = data['videos'][res]
     message = await event.respond('Downloading from YouTube ...')
     name = slugify(data['title'])
-    video_file = video.download(filename=f'{name}.mp4')
-    audio_file = f'{name}-audio.mp4'
-    file = f'{name}-{res}.mp4'
-    bash(f'ffmpeg -i {video_file} -i {audio_file} -c:v copy -c:a aac {file}')
+    file = video.download(filename=f'{name}.mp4')
     response = requests.get(data['thumbnail_url'])
     thumb = data['thumbnail_url'].split('/')[-1]
     thumb_file = open(thumb, 'wb')
@@ -181,8 +178,6 @@ async def confirm(event):
     uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
     text = f"**{data['title']}\n\n{BOT_UN}** {res}"
     await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
-    remove(video_file)
-    remove(audio_file)
     remove(file)
     remove(thumb)
 
