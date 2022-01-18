@@ -49,7 +49,7 @@ async def get_youtube_link(event):
         yt = YouTube(link)
         thumbnail_url = YouTube(link).thumbnail_url
         for i in yt.streams.filter(progressive=True):
-            print(i.resolution, i.mime_type, hbs(i.filesize))
+            print(i.resolution, i.mime_type, hbs(i.filesize, 1))
         title = YouTube(link).title
         videos = {}
         resolutions = []
