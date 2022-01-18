@@ -8,12 +8,14 @@ from pytube.exceptions import RegexMatchError
 from slugify import slugify
 from ethon.telefunc import hbs
 
-from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload
+from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload, \
+    get_resolution_buttons
 from main.database import Database
 from main import bot, ADMIN, RESTART_TEXT, POST_TEXT, USERS_COUNT_TEXT, CANCEL_TEXT, TOP_USERS_TEXT, GROUP_ID, BOT_UN
 
 db = Database()
 WAITING_POST = []
+user_videos ={}
 
 
 @bot.on(events.NewMessage(incoming=True, pattern="/start", func=lambda e: e.is_private))
@@ -45,29 +47,25 @@ async def cancel_operation(event):
 async def get_youtube_link(event):
     try:
         link = event.message.message
-        streams = YouTube(link).streams
+        yt = YouTube(link)
         thumbnail_url = YouTube(link).thumbnail_url
         title = YouTube(link).title
-        thumb = thumbnail_url.split('/')[-1]
-        response = requests.get(thumbnail_url)
-        file = open(thumb, 'wb')
-        file.write(response.content)
-        file.close()
-        videos = streams.filter(adaptive=True).filter(mime_type='video/mp4').filter(only_video=True)\
-            .order_by('resolution')
-        audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(filename=f'audio-{event.sender_id}.mp4')
-        for video in videos:
-            print(f'{slugify(title)}.mp4')
-            file = video.download(filename=f'{slugify(title)}.mp4')
-            print(file)
-            bash(f'ffmpeg -i {file} -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4 -y')
-            metadata = video_metadata(f'video-{event.sender_id}.mp4')
-            width = metadata["width"]
-            height = metadata["height"]
-            duration = metadata["duration"]
-            attributes = [types.DocumentAttributeVideo(duration=duration, w=width, h=height, supports_streaming=True)]
-            print(file)
-            await bot.send_file(event.sender_id, f'video-{event.sender_id}.mp4', thumb=thumb, attributes=attributes)
+        videos = {}
+        resolutions = []
+        streams = yt.streams.filter(adaptive=True).filter(mime_type='video/mp4').order_by('resolution')
+        for video in streams:
+            if video.resolution not in videos:
+                videos[video.resolution] = video
+                resolutions.append(video.resoltion)
+        audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0]
+        data = {
+            'title': title,
+            'thumbnail_url': thumbnail_url,
+            'videos': videos,
+            'audio': audio
+        }
+        user_videos[event.sender_id] = data
+        await event.respond('asf', buttons=get_resolution_buttons(resolutions))
     except RegexMatchError:
         pass
 
@@ -141,7 +139,7 @@ async def post_to_users(event):
     WAITING_POST.append(event.sender_id)
 
 
-@bot.on(events.CallbackQuery(pattern='confirm'))
+@bot.on(events.CallbackQuery(data='confirm'))
 async def confirm(event):
     status = await check_sub(event.sender_id)
     if status:
@@ -152,6 +150,38 @@ async def confirm(event):
                             buttons=get_buttons(event.sender_id))
     else:
         await event.answer("🚫 You aren't a member of the channel", alert=True)
+
+
+@bot.on(events.CallbackQuery(func=lambda e: e[-1] == 'p'))
+async def confirm(event):
+    res = event.data
+    data = user_videos[event.sender_id]
+    video = data.videos[res]
+    message = await event.respond('Downloading from YouTube ...')
+    name = slugify(data.title)
+    video_file = video.download(filename=f'{name}.mp4')
+    audio_file = data.audio.download(filename=f'{name}-audio.mp4')
+    file = f'{name}-{res}.mp4'
+    bash('ffmpeg')
+    response = requests.get(data.thumbnail_url)
+    thumb = data.thumbnail_url.split('/')[-1]
+    thumb_file = open(thumb, 'wb')
+    thumb_file.write(response.content)
+    thumb_file.close()
+    metadata = video_metadata(file)
+    width = metadata["width"]
+    height = metadata["height"]
+    duration = metadata["duration"]
+    attributes = [types.DocumentAttributeVideo(duration=duration, w=width, h=height, supports_streaming=True)]
+    await message.edit('**📤 UPLOADING ...**')
+    upload_time = time.time()
+    uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
+    text = ''
+    await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
+    remove(video_file)
+    remove(audio_file)
+    remove(file)
+    remove(thumb)
 
 
 print('🤖 Bot started working ...')

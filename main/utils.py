@@ -113,20 +113,13 @@ async def fast_upload(file, name, upload_time, client, event, msg):
     return result
 
 
-async def fast_download(filename, file, client, event, download_time, msg):
-    with open(filename, "wb") as fk:
-        result = await download_file(
-            client=client,
-            location=file,
-            out=fk,
-            progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                progress(
-                    d,
-                    t,
-                    event,
-                    download_time,
-                    msg,
-                ),
-            ),
-        )
-    return result
+def get_resolution_buttons(resolutions):
+    buttons = []
+    for i in range(0, len(resolutions), 3):
+        buttons_3 = [Button.inline(res, data=res) for res in resolutions[i:i+3]]
+        if len(buttons_3) < 3:
+            buttons_3.append(Button.inline('audio', data='audio'))
+        buttons.append(buttons_3)
+    if len(resolutions) % 3 ==0:
+        buttons.append([Button.inline('audio', data='audio')])
+    return buttons
