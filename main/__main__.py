@@ -48,8 +48,6 @@ async def get_youtube_link(event):
         link = event.message.message
         yt = YouTube(link)
         thumbnail_url = YouTube(link).thumbnail_url
-        for i in yt.streams.filter(progressive=True):
-            print(i.resolution, i.mime_type, hbs(i.filesize, 1))
         title = YouTube(link).title
         videos = {}
         resolutions = []
@@ -59,10 +57,11 @@ async def get_youtube_link(event):
                 videos[video.resolution] = video
                 resolutions.append(video.resolution)
         audio = yt.streams.filter(mime_type='audio/mp4')[0]
-        text = f'**{title}\n\n**'
+        text = f'📹 **{title}\n\n**'
         for res in resolutions:
-            size = hbs(videos[res].filesize, 0)
-            text += f"`{res}: {' ' * (5-len(res))}  {size}`\n"
+            size = hbs(videos[res].filesize, 1)
+            text += f"`🎞 {res}:  {size}`\n"
+        text += '\n**Select a format ⬇️**'
         data = {
             'title': title,
             'thumbnail_url': thumbnail_url,
@@ -178,7 +177,7 @@ async def confirm(event):
     await message.edit('**📤 UPLOADING ...**')
     upload_time = time.time()
     uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
-    text = f"**{data['title']}\n\n{BOT_UN}** {res}"
+    text = f"**📹 {data['title']}\n\n{BOT_UN}** 🎞 {res}"
     await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
     remove(file)
     remove(thumb)

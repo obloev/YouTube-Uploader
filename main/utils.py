@@ -126,10 +126,10 @@ async def fast_upload(file, name, upload_time, client, event, msg):
 def get_resolution_buttons(resolutions):
     buttons = []
     for i in range(0, len(resolutions), 3):
-        buttons_3 = [Button.inline(res, data=res) for res in resolutions[i:i+3]]
+        buttons_3 = [Button.inline(f'🎞 {res}', data=res) for res in resolutions[i:i+3]]
         if len(buttons_3) < 3:
-            buttons_3.append(Button.inline('audio', data='audio'))
+            buttons_3.append(Button.inline('🎵 audio', data='audio'))
         buttons.append(buttons_3)
     if len(resolutions) % 3 == 0:
-        buttons.append([Button.inline('audio', data='audio')])
+        buttons.append([Button.inline('🎵 audio', data='audio')])
     return buttons
