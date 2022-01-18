@@ -60,14 +60,14 @@ async def get_youtube_link(event):
             print(f'{slugify(title)}.mp4')
             file = video.download(filename=f'{slugify(title)}.mp4')
             print(file)
-            metadata = video_metadata(file)
-            width = metadata["width"]
             bash(f'ffmpeg -i {file} -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
+            metadata = video_metadata(f'video-{event.sender_id}.mp4')
+            width = metadata["width"]
             height = metadata["height"]
             duration = metadata["duration"]
             attributes = [types.DocumentAttributeVideo(duration=duration, w=width, h=height, supports_streaming=True)]
             print(file)
-            await bot.send_file(event.sender_id, f'video-{event.sender_id}.mp4', thumb=thumb, supports_streaming=True, attributes=attributes)
+            await bot.send_file(event.sender_id, f'video-{event.sender_id}.mp4', thumb=thumb, attributes=attributes)
     except RegexMatchError:
         pass
 
