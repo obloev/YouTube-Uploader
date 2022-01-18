@@ -60,7 +60,7 @@ async def get_youtube_link(event):
             file = video.download(f'{slugify(title)}.mp4')
             metadata = video_metadata(file)
             width = metadata["width"]
-            bash(f'ffmpeg -i """{file}""" -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
+            bash(f'ffmpeg -i {file} -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
             height = metadata["height"]
             duration = metadata["duration"]
             attributes = [types.DocumentAttributeVideo(duration=duration, w=width, h=height, supports_streaming=True)]
