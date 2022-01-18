@@ -161,7 +161,7 @@ async def confirm(event):
     res = event.data.decode('ascii')
     data = user_videos[event.sender_id]
     video = data['videos'][res]
-    event.delete()
+    await event.delete()
     message = await event.respond('**📥 DOWNLOADING from #YouTube ...**')
     name = slugify(data['title'])
     file = video.download(filename=f'{name}.mp4')
@@ -180,7 +180,7 @@ async def confirm(event):
     uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
     text = f"**📹 {data['title']}\n\n{BOT_UN}** 🎞 {res}"
     await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
-    message.delete()
+    await message.delete()
     remove(file)
     remove(thumb)
     del user_videos[event.sender_id]
@@ -190,7 +190,7 @@ async def confirm(event):
 async def confirm(event):
     data = user_videos[event.sender_id]
     audio = data['audio']
-    event.delete()
+    await event.delete()
     message = await event.respond('**📥 DOWNLOADING from #YouTube ...**')
     name = slugify(data['title'])
     file = audio.download(filename=f'{name}.mp4')
@@ -200,7 +200,7 @@ async def confirm(event):
     upload_time = time.time()
     uploader = await fast_upload(audio_file, audio_file, upload_time, bot, message, '**📤 UPLOADING ...**')
     await bot.send_file(event.chat_id, uploader, caption=f'✔️ {BOT_UN}')
-    message.delete()
+    await message.delete()
     remove(file)
     remove(audio_file)
     del user_videos[event.sender_id]
