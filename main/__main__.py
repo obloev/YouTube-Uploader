@@ -55,7 +55,7 @@ async def get_youtube_link(event):
         file.close()
         videos = streams.filter(adaptive=True).filter(mime_type='video/mp4').filter(only_video=True)\
             .order_by('resolution')
-        audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(f'audio-{event.sender_id}.mp4')
+        audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(filename=f'audio-{event.sender_id}.mp4')
         for video in videos:
             print(f'{slugify(title)}.mp4')
             file = video.download(filename=f'{slugify(title)}.mp4')
