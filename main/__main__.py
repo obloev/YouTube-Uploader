@@ -44,7 +44,7 @@ async def get_youtube_link(event):
     try:
         link = event.message.message
         videos = YouTube(link).streams.filter(only_video=True).order_by('resolution')
-        async for video in videos:
+        for video in videos:
             await event.respond(f'{str(video)} {hbs(video.filesize)}')
     except RegexMatchError:
         pass
