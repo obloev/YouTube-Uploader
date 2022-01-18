@@ -59,14 +59,17 @@ async def get_youtube_link(event):
                 resolutions.append(video.resolution)
         print(yt.streams.filter(mime_type='audio/mp4'))
         audio = yt.streams.filter(mime_type='audio/mp4')[0]
+        text = f'**{title}\n\n**'
+        for res in resolutions:
+            text += f'`{res} {videos[res].filesize}`\n'
         data = {
             'title': title,
             'thumbnail_url': thumbnail_url,
             'videos': videos,
-            'audio': audio
+            'audio': audio,
         }
         user_videos[event.sender_id] = data
-        await event.respond('asf', buttons=get_resolution_buttons(resolutions))
+        await event.send_file(thumbnail_url, captio=text, buttons=get_resolution_buttons(resolutions))
     except RegexMatchError:
         pass
 
@@ -177,7 +180,7 @@ async def confirm(event):
     await message.edit('**📤 UPLOADING ...**')
     upload_time = time.time()
     uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
-    text = ''
+    text = f"**{data['title']}\n\n**"
     await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
     remove(video_file)
     remove(audio_file)

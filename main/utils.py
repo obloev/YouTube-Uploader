@@ -84,7 +84,7 @@ async def progress(current, total, event, start, type_of_ps):
         )
         tmp = (
             progress_str
-            + "**Progress:** {0} of {1}\n**Speed:** {2}/s\n**Time left:** {3}".format(
+            + "**Uploaded:** {0} of {1}\n**Speed:** {2}/s\n**Time left:** {3}".format(
                 hbs(current),
                 hbs(total),
                 hbs(speed),
@@ -120,6 +120,6 @@ def get_resolution_buttons(resolutions):
         if len(buttons_3) < 3:
             buttons_3.append(Button.inline('audio', data='audio'))
         buttons.append(buttons_3)
-    if len(resolutions) % 3 ==0:
+    if len(resolutions) % 3 == 0:
         buttons.append([Button.inline('audio', data='audio')])
     return buttons
