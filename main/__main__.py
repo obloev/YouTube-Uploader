@@ -153,9 +153,9 @@ async def confirm(event):
         await event.answer("🚫 You aren't a member of the channel", alert=True)
 
 
-@bot.on(events.CallbackQuery(func=lambda e: e.data[-1] == 'p'))
+@bot.on(events.CallbackQuery(func=lambda e: e.data.decode('ascii')[-1] == 'p'))
 async def confirm(event):
-    res = event.data
+    res = event.data.decode('ascii')
     data = user_videos[event.sender_id]
     video = data.videos[res]
     message = await event.respond('Downloading from YouTube ...')
