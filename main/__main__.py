@@ -43,7 +43,7 @@ async def get_youtube_link(event):
     try:
         link = event.message.message
         videos = YouTube(link).streams
-        await event.respond(videos)
+        await event.respond(str(videos))
     except RegexMatchError:
         pass
 
@@ -78,7 +78,7 @@ async def get_converts_count(event):
     for num, user_info in enumerate(top_users):
         user = await bot.get_entity(user_info['id'])
         text += f"**{num + 1}.** {mention(user.id, user.first_name)} - " \
-                f"`{user_info['conversions']}` conversions\n"
+                f"`{user_info['downloads']}` downloads\n"
     await message.edit(text)
 
 
