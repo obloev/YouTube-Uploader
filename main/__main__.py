@@ -61,7 +61,7 @@ async def get_youtube_link(event):
         audio = yt.streams.filter(mime_type='audio/mp4')[0]
         text = f'**{title}\n\n**'
         for res in resolutions:
-            text += f'`{res} {videos[res].filesize}`\n'
+            text += f"`{hbs(res)}: {' ' if res=='1080p' else ''}  {videos[res].filesize}`\n"
         data = {
             'title': title,
             'thumbnail_url': thumbnail_url,
