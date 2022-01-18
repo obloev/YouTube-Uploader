@@ -56,7 +56,7 @@ async def get_youtube_link(event):
         for video in videos:
             file = video.download()
             print(file)
-            await bot.send_file(event.sender_id, file, thumb=thumb)
+            await bot.send_file(event.sender_id, file, thumb=thumb, supports_streaming=True)
         for audio in audios:
             await event.respond(f'{str(audio)} {hbs(audio.filesize)}')
     except RegexMatchError:
