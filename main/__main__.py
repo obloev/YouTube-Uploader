@@ -1,5 +1,5 @@
 import time
-from os import remove, path
+from os import remove
 import requests
 from ethon.pyfunc import bash, video_metadata
 from telethon import events, Button, types
@@ -21,8 +21,8 @@ user_videos = {}
 async def start(event):
     if event.sender_id in WAITING_POST:
         WAITING_POST.remove(event.sender_id)
-    await event.respond(f"👋 Hi {mention(event)}!\n🤖 I'm **Video Convertor**\n"
-                        f"🎞 Just send me a video and I convert it to audio format",
+    await event.respond(f"👋 Hi {mention(event)}!\n🤖 I'm **#YouTube Uploader**\n"
+                        f"🎞 Just send me a YouTube video link. I will download the video and send it to you",
                         buttons=get_buttons(event.sender_id))
 
 
@@ -160,6 +160,7 @@ async def confirm(event):
 async def confirm(event):
     res = event.data.decode('ascii')
     data = user_videos[event.sender_id]
+    await db.add_download(event.sender_id)
     video = data['videos'][res]
     await event.delete()
     message = await event.respond('**📥 DOWNLOADING from #YouTube ...**')
@@ -190,6 +191,7 @@ async def confirm(event):
 async def confirm(event):
     data = user_videos[event.sender_id]
     audio = data['audio']
+    await db.add_download(event.sender_id)
     await event.delete()
     message = await event.respond('**📥 DOWNLOADING from #YouTube ...**')
     name = slugify(data['title'])
