@@ -6,7 +6,7 @@ from pytube import YouTube
 
 from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload
 from main.database import Database
-from main import bot, ADMIN, RESTART_TEXT, POST_TEXT, USERS_COUNT_TEXT, CANCEL_TEXT, TOP_USERS_TEXT, GROUP_ID
+from main import bot, ADMIN, RESTART_TEXT, POST_TEXT, USERS_COUNT_TEXT, CANCEL_TEXT, TOP_USERS_TEXT, GROUP_ID, BOT_UN
 
 db = Database()
 WAITING_POST = []
