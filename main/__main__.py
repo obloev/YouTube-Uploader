@@ -161,7 +161,8 @@ async def confirm(event):
     res = event.data.decode('ascii')
     data = user_videos[event.sender_id]
     video = data['videos'][res]
-    message = await event.respond('Downloading from YouTube ...')
+    event.delete()
+    message = await event.respond('**📥 DOWNLOADING from #YouTube ...**')
     name = slugify(data['title'])
     file = video.download(filename=f'{name}.mp4')
     response = requests.get(data['thumbnail_url'])
@@ -179,8 +180,30 @@ async def confirm(event):
     uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
     text = f"**📹 {data['title']}\n\n{BOT_UN}** 🎞 {res}"
     await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
+    message.delete()
     remove(file)
     remove(thumb)
+    del user_videos[event.sender_id]
+
+
+@bot.on(events.CallbackQuery(data='audio'))
+async def confirm(event):
+    data = user_videos[event.sender_id]
+    audio = data['audio']
+    event.delete()
+    message = await event.respond('**📥 DOWNLOADING from #YouTube ...**')
+    name = slugify(data['title'])
+    file = audio.download(filename=f'{name}.mp4')
+    audio_file = f'{name}.mp3'
+    bash(f'ffmpeg -i {audio_file} -q:a 0 -map a {audio_file}')
+    await message.edit('**📤 UPLOADING ...**')
+    upload_time = time.time()
+    uploader = await fast_upload(audio_file, audio_file, upload_time, bot, message, '**📤 UPLOADING ...**')
+    await bot.send_file(event.chat_id, uploader, caption=f'✔️ {BOT_UN}')
+    message.delete()
+    remove(file)
+    remove(audio_file)
+    del user_videos[event.sender_id]
 
 
 print('🤖 Bot started working ...')
