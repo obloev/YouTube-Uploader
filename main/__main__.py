@@ -60,7 +60,7 @@ async def get_youtube_link(event):
         print(yt.streams.filter(mime_type='audio/mp4'))
         audio = yt.streams.filter(mime_type='audio/mp4')[0]
         print(hbs(audio.filesize))
-        audio.download('sd.mp4')
+        audio.download(filename='sd.mp4')
         bash('ffmpeg -i sd.mp4 ss.mp3')
         print(path.getsize('ss.mp3'))
         text = f'**{title}\n\n**'
