@@ -51,19 +51,19 @@ async def get_youtube_link(event):
         file = open(thumb, 'wb')
         file.write(response.content)
         file.close()
-        videos = streams.filter(adaptive=True).filter(only_video=True).order_by('resolution')
-        audios = streams.filter(only_audio=True)
+        videos = streams.filter(adaptive=True).filter(mime_type='video/mp4').filter(only_video=True)\
+            .order_by('resolution')
+        audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(f'audio-{event.sender_id}.mp4')
         for video in videos:
             file = video.download()
             metadata = video_metadata(file)
             width = metadata["width"]
+            bash(f'ffmpeg -i "{file}" -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
             height = metadata["height"]
             duration = metadata["duration"]
             attributes = [types.DocumentAttributeVideo(duration=duration, w=width, h=height, supports_streaming=True)]
             print(file)
-            await bot.send_file(event.sender_id, file, thumb=thumb, supports_streaming=True, attributes=attributes)
-        for audio in audios:
-            await event.respond(f'{str(audio)} {hbs(audio.filesize)}')
+            await bot.send_file(event.sender_id, f'video-{event.sender_id}.mp4', thumb=thumb, supports_streaming=True, attributes=attributes)
     except RegexMatchError:
         pass
 
