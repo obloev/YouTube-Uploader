@@ -49,6 +49,7 @@ async def get_youtube_link(event):
         yt = YouTube(link)
         thumbnail_url = YouTube(link).thumbnail_url
         title = YouTube(link).title
+        print(yt.streams.filter(progressive=True))
         videos = {}
         resolutions = []
         streams = yt.streams.filter(adaptive=True).filter(mime_type='video/mp4').order_by('resolution')
@@ -165,7 +166,7 @@ async def confirm(event):
     message = await event.respond('Downloading from YouTube ...')
     name = slugify(data['title'])
     video_file = video.download(filename=f'{name}.mp4')
-    audio_file = data['audio'].download(filename=f'{name}-audio.mp4')
+    audio_file = f'{name}-audio.mp4'
     file = f'{name}-{res}.mp4'
     bash(f'ffmpeg -i {video_file} -i {audio_file} -c:v copy -c:a aac {file}')
     response = requests.get(data['thumbnail_url'])
