@@ -57,15 +57,13 @@ async def get_youtube_link(event):
             if video.resolution not in videos:
                 videos[video.resolution] = video
                 resolutions.append(video.resolution)
-        print(yt.streams.filter(mime_type='audio/mp4'))
         audio = yt.streams.filter(mime_type='audio/mp4')[0]
-        print(hbs(audio.filesize))
-        audio.download(filename='sd.mp4')
-        bash('ffmpeg -i sd.mp4 ss.mp3')
-        print(path.getsize('ss.mp3'))
+        audio.download(filename=f"{slugify(title)}-audio.mp4")
+        bash(f'ffmpeg -i {slugify(title)}-audio.mp4 {slugify(title)}-audio.mp3')
         text = f'**{title}\n\n**'
         for res in resolutions:
-            text += f"`{res}: {' ' * (5-len(res))}  {hbs(videos[res].filesize + audio.filesize)}`\n"
+            size = hbs(videos[res].filesize + path.getsize(f'{slugify(title)}-audio.mp3'))
+            text += f"`{res}: {' ' * (5-len(res))}  {size}`\n"
         data = {
             'title': title,
             'thumbnail_url': thumbnail_url,
