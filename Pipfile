@@ -10,6 +10,7 @@ motor = "*"
 heroku3 = "*"
 pytube = "*"
 pymongo = {extras = ["srv"], version = "*"}
+python-slugify = "*"
 
 [dev-packages]
 

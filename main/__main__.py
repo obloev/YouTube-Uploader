@@ -5,6 +5,7 @@ from ethon.pyfunc import bash, video_metadata
 from telethon import events, Button, types
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
+from slugify import slugify
 from ethon.telefunc import hbs
 
 from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload
@@ -46,6 +47,7 @@ async def get_youtube_link(event):
         link = event.message.message
         streams = YouTube(link).streams
         thumbnail_url = YouTube(link).thumbnail_url
+        title = YouTube(link).title
         thumb = thumbnail_url.split('/')[-1]
         response = requests.get(thumbnail_url)
         file = open(thumb, 'wb')
@@ -55,7 +57,7 @@ async def get_youtube_link(event):
             .order_by('resolution')
         audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(f'audio-{event.sender_id}.mp4')
         for video in videos:
-            file = video.download()
+            file = video.download(f'{slugify(title)}.mp4')
             metadata = video_metadata(file)
             width = metadata["width"]
             bash(f'ffmpeg -i """{file}""" -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
