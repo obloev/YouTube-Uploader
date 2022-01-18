@@ -48,7 +48,7 @@ async def get_youtube_link(event):
         videos = streams.filter(only_video=True).order_by('resolution')
         audios = streams.filter(only_audio=True)
         for video in videos:
-            file = await video.download()
+            file = video.download()
             print(file)
             await bot.send_file(event.sender_id, file, thumb=thumbnail_url)
         for audio in audios:
