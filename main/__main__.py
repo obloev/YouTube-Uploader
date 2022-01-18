@@ -57,7 +57,9 @@ async def get_youtube_link(event):
             .order_by('resolution')
         audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(f'audio-{event.sender_id}.mp4')
         for video in videos:
+            print(f'{slugify(title)}.mp4')
             file = video.download(f'{slugify(title)}.mp4')
+            print(file)
             metadata = video_metadata(file)
             width = metadata["width"]
             bash(f'ffmpeg -i {file} -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
