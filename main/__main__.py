@@ -43,9 +43,13 @@ async def cancel_operation(event):
 async def get_youtube_link(event):
     try:
         link = event.message.message
-        videos = YouTube(link).streams.filter(only_video=True).order_by('resolution')
+        streams = YouTube(link).streams
+        videos = streams.filter(only_video=True).order_by('resolution')
+        audios = streams.filter(only_audio=True)
         for video in videos:
             await event.respond(f'{str(video)} {hbs(video.filesize)}')
+        for audio in audios:
+            await event.respond(f'{str(audio)} {hbs(audio.filesize)}')
     except RegexMatchError:
         pass
 
