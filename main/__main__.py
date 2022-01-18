@@ -197,11 +197,16 @@ async def confirm(event):
     name = slugify(data['title'])
     file = audio.download(filename=f'{name}.mp4')
     audio_file = f'{name}.mp3'
+    response = requests.get(data['thumbnail_url'])
+    thumb = data['thumbnail_url'].split('/')[-1]
+    thumb_file = open(thumb, 'wb')
+    thumb_file.write(response.content)
+    thumb_file.close()
     bash(f'ffmpeg -i {file} {audio_file}')
     await message.edit('**📤 UPLOADING ...**')
     upload_time = time.time()
     uploader = await fast_upload(audio_file, audio_file, upload_time, bot, message, '**📤 UPLOADING ...**')
-    await bot.send_file(event.chat_id, uploader, caption=f'✔️ {BOT_UN}')
+    await bot.send_file(event.chat_id, uploader, caption=f'✔️ {BOT_UN}', thumb=thumb)
     await message.delete()
     remove(file)
     remove(audio_file)
