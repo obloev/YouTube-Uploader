@@ -6,16 +6,15 @@ from telethon import events, Button, types
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 from slugify import slugify
-from ethon.telefunc import hbs
 
 from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload, \
-    get_resolution_buttons
+    get_resolution_buttons, hbs
 from main.database import Database
 from main import bot, ADMIN, RESTART_TEXT, POST_TEXT, USERS_COUNT_TEXT, CANCEL_TEXT, TOP_USERS_TEXT, GROUP_ID, BOT_UN
 
 db = Database()
 WAITING_POST = []
-user_videos ={}
+user_videos = {}
 
 
 @bot.on(events.NewMessage(incoming=True, pattern="/start", func=lambda e: e.is_private))
@@ -62,7 +61,7 @@ async def get_youtube_link(event):
         bash(f'ffmpeg -i {slugify(title)}-audio.mp4 {slugify(title)}-audio.mp3')
         text = f'**{title}\n\n**'
         for res in resolutions:
-            size = hbs(videos[res].filesize + path.getsize(f'{slugify(title)}-audio.mp3'))
+            size = hbs(videos[res].filesize + path.getsize(f'{slugify(title)}-audio.mp3'), 0)
             text += f"`{res}: {' ' * (5-len(res))}  {size}`\n"
         data = {
             'title': title,
@@ -182,7 +181,7 @@ async def confirm(event):
     await message.edit('**📤 UPLOADING ...**')
     upload_time = time.time()
     uploader = await fast_upload(file, file, upload_time, bot, message, '**📤 UPLOADING ...**')
-    text = f"**{data['title']}\n\n**"
+    text = f"**{data['title']}\n\n{BOT_UN}** {res}"
     await bot.send_file(event.chat_id, uploader, caption=text, thumb=thumb, attributes=attributes, force_document=False)
     remove(video_file)
     remove(audio_file)

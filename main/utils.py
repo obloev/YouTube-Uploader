@@ -1,9 +1,7 @@
 import asyncio
 import time
 import heroku3
-
-from ethon.FasterTg import upload_file, download_file
-from ethon.telefunc import hbs
+from ethon.FasterTg import upload_file
 
 from main import *
 from telethon.tl.functions.channels import GetParticipantRequest
@@ -54,6 +52,18 @@ async def restart_heroku():
     return True
 
 
+def hbs(size, n):
+    if not size:
+        return ""
+    power = 2 ** 10
+    raised_to_pow = 0
+    dict_power_n = {0: "B", 1: "K", 2: "M", 3: "G", 4: "T", 5: "P"}
+    while size > power:
+        size /= power
+        raised_to_pow += 1
+    return str(round(size, n)) + " " + dict_power_n[raised_to_pow] + "B"
+
+
 def time_formatter(milliseconds: int) -> str:
     seconds, milliseconds = divmod(int(milliseconds), 1000)
     minutes, seconds = divmod(seconds, 60)
@@ -85,9 +95,9 @@ async def progress(current, total, event, start, type_of_ps):
         tmp = (
             progress_str
             + "**Uploaded:** {0} of {1}\n**Speed:** {2}/s\n**Time left:** {3}".format(
-                hbs(current),
-                hbs(total),
-                hbs(speed),
+                hbs(current, 1),
+                hbs(total, 1),
+                hbs(speed, 1),
                 time_formatter(time_to_completion),
             )
         )
