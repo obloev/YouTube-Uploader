@@ -197,7 +197,7 @@ async def confirm(event):
     name = slugify(data['title'])
     file = audio.download(filename=f'{name}.mp4')
     audio_file = f'{name}.mp3'
-    bash(f'ffmpeg -i {audio_file} -q:a 0 -map a {audio_file}')
+    bash(f'ffmpeg -i {file} -q:a 0 -map a {audio_file}')
     await message.edit('**📤 UPLOADING ...**')
     upload_time = time.time()
     uploader = await fast_upload(audio_file, audio_file, upload_time, bot, message, '**📤 UPLOADING ...**')
