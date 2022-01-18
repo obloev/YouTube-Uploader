@@ -69,7 +69,7 @@ async def get_youtube_link(event):
             'audio': audio,
         }
         user_videos[event.sender_id] = data
-        await bot.send_file(event.sender_id, thumbnail_url, captio=text, buttons=get_resolution_buttons(resolutions))
+        await bot.send_file(event.sender_id, thumbnail_url, caption=text, buttons=get_resolution_buttons(resolutions))
     except RegexMatchError:
         pass
 
