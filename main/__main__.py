@@ -163,7 +163,7 @@ async def confirm(event):
     video_file = video.download(filename=f'{name}.mp4')
     audio_file = data['audio'].download(filename=f'{name}-audio.mp4')
     file = f'{name}-{res}.mp4'
-    bash('ffmpeg')
+    bash(f'ffmpeg -i {video_file} -i {audio_file} -c:v copy -c:a aac {file}')
     response = requests.get(data['thumbnail_url'])
     thumb = data['thumbnail_url'].split('/')[-1]
     thumb_file = open(thumb, 'wb')
