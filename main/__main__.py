@@ -153,7 +153,7 @@ async def confirm(event):
         await event.answer("🚫 You aren't a member of the channel", alert=True)
 
 
-@bot.on(events.CallbackQuery(func=lambda e: e[-1] == 'p'))
+@bot.on(events.CallbackQuery(func=lambda e: e.data[-1] == 'p'))
 async def confirm(event):
     res = event.data
     data = user_videos[event.sender_id]
