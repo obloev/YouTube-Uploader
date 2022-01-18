@@ -22,7 +22,7 @@ async def start(event):
     if event.sender_id in WAITING_POST:
         WAITING_POST.remove(event.sender_id)
     await event.respond(f"👋 Hi {mention(event)}!\n🤖 I'm **#YouTube Uploader**\n"
-                        f"🎞 Just send me a YouTube video link. I will download the video and send it to you",
+                        f"🔗 Just send me a YouTube video link. I will download the video and send it to you",
                         buttons=get_buttons(event.sender_id))
 
 
