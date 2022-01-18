@@ -3,6 +3,7 @@ from os import remove
 from ethon.pyfunc import bash
 from telethon import events, Button
 from pytube import YouTube
+from pytube.exceptions import RegexMatchError
 
 from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload
 from main.database import Database
@@ -39,9 +40,12 @@ async def cancel_operation(event):
 
 @bot.on(events.NewMessage(incoming=True, func=lambda e: e.is_private))
 async def get_youtube_link(event):
-    link = event.message.message
-    videos = YouTube(link).streams
-    await event.respond(videos)
+    try:
+        link = event.message.message
+        videos = YouTube(link).streams
+        await event.respond(videos)
+    except RegexMatchError:
+        pass
 
 
 @bot.on(events.NewMessage(incoming=True, from_users=[ADMIN], pattern=RESTART_TEXT))
