@@ -1,8 +1,8 @@
 import time
 from os import remove
 import requests
-from ethon.pyfunc import bash
-from telethon import events, Button
+from ethon.pyfunc import bash, video_metadata
+from telethon import events, Button, types
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 from ethon.telefunc import hbs
@@ -55,8 +55,13 @@ async def get_youtube_link(event):
         audios = streams.filter(only_audio=True)
         for video in videos:
             file = video.download()
+            metadata = video_metadata(file)
+            width = metadata["width"]
+            height = metadata["height"]
+            duration = metadata["duration"]
+            attributes = [types.DocumentAttributeVideo(duration=duration, w=width, h=height, supports_streaming=True)]
             print(file)
-            await bot.send_file(event.sender_id, file, thumb=thumb, supports_streaming=True)
+            await bot.send_file(event.sender_id, file, thumb=thumb, supports_streaming=True, attributes=attributes)
         for audio in audios:
             await event.respond(f'{str(audio)} {hbs(audio.filesize)}')
     except RegexMatchError:
