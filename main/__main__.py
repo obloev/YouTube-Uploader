@@ -57,8 +57,8 @@ async def get_youtube_link(event):
             if video.resolution not in videos:
                 videos[video.resolution] = video
                 resolutions.append(video.resolution)
-        print(streams)
-        audio = streams.filter(mime_type='audio/mp4')[0]
+        print(yt.streams.filter(mime_type='audio/mp4'))
+        audio = yt.streams.filter(mime_type='audio/mp4')[0]
         data = {
             'title': title,
             'thumbnail_url': thumbnail_url,
