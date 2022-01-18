@@ -53,7 +53,7 @@ async def get_youtube_link(event):
         title = YouTube(link).title
         videos = {}
         resolutions = []
-        streams = yt.streams.filter(progressive=True).filter(mime_type='video/mp4').order_by('resolution')
+        streams = yt.streams.filter(progressive=True).order_by('resolution')
         for video in streams:
             if video.resolution not in videos:
                 videos[video.resolution] = video
