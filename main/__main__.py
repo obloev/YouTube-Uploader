@@ -4,6 +4,7 @@ from ethon.pyfunc import bash
 from telethon import events, Button
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
+from ethon.telefunc import hbs
 
 from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload
 from main.database import Database
@@ -42,8 +43,9 @@ async def cancel_operation(event):
 async def get_youtube_link(event):
     try:
         link = event.message.message
-        videos = YouTube(link).streams
-        await event.respond(str(videos))
+        videos = YouTube(link).streams.filter(only_video=True).order_by('resolution')
+        async for video in videos:
+            await event.respond(f'{str(video)} {hbs(video.filesize)}')
     except RegexMatchError:
         pass
 
