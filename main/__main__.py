@@ -206,7 +206,7 @@ async def confirm(event):
     await message.edit('**📤 UPLOADING ...**')
     upload_time = time.time()
     uploader = await fast_upload(audio_file, audio_file, upload_time, bot, message, '**📤 UPLOADING ...**')
-    await bot.send_file(event.chat_id, uploader, caption=f'✔️ {BOT_UN}', thumb=thumb, force_document=False)
+    await bot.send_file(event.chat_id, uploader, caption=f'✔️ {BOT_UN}',  force_document=False)
     await message.delete()
     remove(file)
     remove(audio_file)
