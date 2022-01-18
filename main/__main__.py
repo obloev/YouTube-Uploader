@@ -58,7 +58,7 @@ async def get_youtube_link(event):
         audio = streams.filter(only_audio=True).filter(mime_type='audio/mp4')[0].download(f'audio-{event.sender_id}.mp4')
         for video in videos:
             print(f'{slugify(title)}.mp4')
-            file = video.download(file_name=f'{slugify(title)}.mp4')
+            file = video.download(filename=f'{slugify(title)}.mp4')
             print(file)
             metadata = video_metadata(file)
             width = metadata["width"]
