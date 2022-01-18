@@ -60,7 +60,7 @@ async def get_youtube_link(event):
             print(f'{slugify(title)}.mp4')
             file = video.download(filename=f'{slugify(title)}.mp4')
             print(file)
-            bash(f'ffmpeg -i {file} -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4')
+            bash(f'ffmpeg -i {file} -i {audio} -c:v copy -c:a aac video-{event.sender_id}.mp4 -y')
             metadata = video_metadata(f'video-{event.sender_id}.mp4')
             width = metadata["width"]
             height = metadata["height"]
