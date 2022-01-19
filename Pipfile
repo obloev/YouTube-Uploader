@@ -7,10 +7,10 @@ name = "pypi"
 telethon = "*"
 ethon = "*"
 motor = "*"
-heroku3 = "*"
 pytube = "*"
 pymongo = {extras = ["srv"], version = "*"}
 python-slugify = "*"
+python-decouple = "*"
 
 [dev-packages]
 

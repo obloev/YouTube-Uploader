@@ -7,10 +7,9 @@ from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 from slugify import slugify
 
-from main.utils import restart_heroku, check_sub, send_sub_request, get_buttons, mention, fast_upload, \
-    get_resolution_buttons, hbs
+from main.utils import check_sub, send_sub_request, get_buttons, mention, fast_upload, get_resolution_buttons, hbs
 from main.database import Database
-from main import bot, ADMIN, RESTART_TEXT, POST_TEXT, USERS_COUNT_TEXT, CANCEL_TEXT, TOP_USERS_TEXT, GROUP_ID, BOT_UN
+from main import bot, ADMIN, POST_TEXT, USERS_COUNT_TEXT, CANCEL_TEXT, TOP_USERS_TEXT, GROUP_ID, BOT_UN
 
 db = Database()
 WAITING_POST = []
@@ -72,15 +71,6 @@ async def get_youtube_link(event):
         await bot.send_file(event.sender_id, thumbnail_url, caption=text, buttons=get_resolution_buttons(resolutions))
     except RegexMatchError:
         pass
-
-
-@bot.on(events.NewMessage(incoming=True, from_users=[ADMIN], pattern=RESTART_TEXT))
-async def restart(event):
-    result = await restart_heroku()
-    if result:
-        await event.respond('**✔️ Restarted app**')
-    else:
-        await event.respond('**❌ An error occurred!**')
 
 
 @bot.on(events.NewMessage(incoming=True, pattern=USERS_COUNT_TEXT))

@@ -1,6 +1,5 @@
 import asyncio
 import time
-import heroku3
 from ethon.FasterTg import upload_file
 
 from main import *
@@ -36,20 +35,11 @@ async def send_sub_request(event):
 def get_buttons(user_id):
     if user_id == ADMIN:
         buttons = [
-            [Button.text(RESTART_TEXT), Button.text(POST_TEXT)],
+            [Button.text(POST_TEXT)],
             [Button.text(USERS_COUNT_TEXT), Button.text(TOP_USERS_TEXT, resize=True)]
         ]
         return buttons
     return None
-
-
-async def restart_heroku():
-    if not HEROKU_API and HEROKU_APP:
-        return False
-    heroku = heroku3.from_key(HEROKU_API)
-    bot_app = heroku.apps()[HEROKU_APP]
-    bot_app.restart()
-    return True
 
 
 def hbs(size, n):
